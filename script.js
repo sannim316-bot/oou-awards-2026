@@ -16,7 +16,7 @@
 // ============================================================
 const CONFIG = {
   // Backend API URL (change this to your deployed backend URL)
-  API_URL: 'https://oou-awards-2026-production.up.railway.app/api',
+ API_URL: 'https://oou-awards-2026-production.up.railway.app',
 
   // Replace with your actual Paystack public key from paystack.com
   PAYSTACK_PUBLIC_KEY: 'pk_test_9f8b40bc8fafcdc36039c45994d12664217c31fd',
@@ -69,7 +69,7 @@ const API = {
 
   // Categories
   async getCategories() {
-    return this.request('/categories');
+    return this.request('/categories', { method: 'GET' });
   },
 
   async createCategory(name) {
@@ -94,11 +94,11 @@ const API = {
 
   // Nominees
   async getNominees() {
-    return this.request('/nominees');
+    return this.request('/nominees', { method: 'GET' });
   },
 
   async getNominee(id) {
-    return this.request(`/nominees/${id}`);
+    return this.request(`/nominees/${id}`, { method: 'GET' });
   },
 
   async createNominee(formData) {
@@ -143,7 +143,7 @@ const API = {
 
   // Stats
   async getStats() {
-    return this.request('/stats');
+    return this.request('/stats', { method: 'GET' });
   },
 
   // Auth
@@ -163,7 +163,7 @@ const API = {
   },
 
   async verifyToken() {
-    return this.request('/auth/verify');
+    return this.request('/auth/verify', { method: 'GET' });
   },
 };
 
