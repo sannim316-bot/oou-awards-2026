@@ -16,7 +16,7 @@
 // ============================================================
 const CONFIG = {
   // Backend API URL (change this to your deployed backend URL)
- API_URL: 'https://oou-awards-2026-production.up.railway.app',
+ API_URL: 'https://oou-awards-2026-production.up.railway.app/api',
 
   // Replace with your actual Paystack public key from paystack.com
   PAYSTACK_PUBLIC_KEY: 'pk_test_9f8b40bc8fafcdc36039c45994d12664217c31fd',
