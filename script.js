@@ -1,24 +1,10 @@
-/**
- * STELLAR AWARDS NIGHT 2025 — script.js
- * ============================================================
- * Updated to use Backend API
- * Handles:
- *  - API integration with backend
- *  - Nominee rendering & category filtering
- *  - Vote modal & Paystack payment integration
- *  - Admin authentication with JWT
- *  - Countdown timer & navbar scroll
- * ============================================================
- */
 
-// ============================================================
-// 1. CONFIGURATION — UPDATE THESE BEFORE GOING LIVE
-// ============================================================
 const CONFIG = {
-  // Backend API URL (change this to your deployed backend URL)
+  
  API_URL: 'https://oou-awards-2026-production.up.railway.app/api',
 
-  // Replace with your actual Paystack public key from paystack.com
+  
+ 
   PAYSTACK_PUBLIC_KEY: 'pk_test_9f8b40bc8fafcdc36039c45994d12664217c31fd',
 
   // Cost per vote in Kobo (1 NGN = 100 Kobo). ₦200 = 20000 Kobo
@@ -94,11 +80,11 @@ const API = {
 
   // Nominees
   async getNominees() {
-    return this.request('/nominees', { method: 'GET' });
+    return this.Get('/nominees');
   },
 
   async getNominee(id) {
-    return this.request(`/nominees/${id}`, { method: 'GET' });
+    return this.request(`/nominees/${id}`);
   },
 
   async createNominee(formData) {
@@ -143,7 +129,7 @@ const API = {
 
   // Stats
   async getStats() {
-    return this.request('/stats', { method: 'GET' });
+    return this.request('/stats');
   },
 
   // Auth
@@ -163,7 +149,7 @@ const API = {
   },
 
   async verifyToken() {
-    return this.request('/auth/verify', { method: 'GET' });
+    return this.request('/auth/verify');
   },
 };
 
