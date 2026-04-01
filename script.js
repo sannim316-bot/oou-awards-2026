@@ -411,9 +411,9 @@ async function updateStats() {
     const nomEl = document.getElementById('nominees-count');
     const catEl = document.getElementById('categories-count');
 
-    if (totalEl) totalEl.textContent = (stats.total_votes || 0).toLocaleString();
-    if (nomEl) nomEl.textContent = stats.nominees_count || 0;
-    if (catEl) catEl.textContent = stats.categories_count || 0;
+    if (totalEl) totalEl.textContent = (stats.totalVotes || 0).toLocaleString();
+    if (nomEl) nomEl.textContent = stats.nomineesCount || 0;
+    if (catEl) catEl.textContent = stats.categoriesCount || 0;
   } catch (error) {
     console.error('Failed to update stats:', error);
   }
