@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OOu Awards Night 2025 – Vote Now</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Google Fonts: Cormorant Garamond (display) + DM Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <!-- Paystack inline JS -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">✦ ASSON AWARDS</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#nominees">Nominees</a></li>
+        <li><a href="#how">How to Vote</a></li>
+        <li><a href="admin.html" class="btn-admin">Admin</a></li>
+      </ul>
+      <button class="burger" id="burgerBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <header class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-particles" id="particles"></div>
+      <div class="hero-gradient"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Asson OOU </p>
+      <h1 class="hero-title">
+        <span class="line1">DINNER & </span>
+        <span class="line2">Awards</span>
+        <span class="line3">Night <em>2026</em></span>
+      </h1>
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-icon">📅</span>
+          <span>Saturday, 28th June 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-icon">📍</span>
+          <span>The Grand Ballroom, Sagamu</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-icon">🕖</span>
+          <span>6:30 PM – Midnight</span>
+        </div>
+      </div>
+      <p class="hero-desc">
+        Cast your vote for the brightest stars of our school community. Every ₦200 vote directly supports event production and counts toward crowning this year's champions.
+      </p>
+      <a href="#nominees" class="btn-hero">Cast Your Vote ↓</a>
+    </div>
+
+    <!-- Countdown Timer -->
+    <div class="countdown-bar">
+      <span class="countdown-label">Voting closes in:</span>
+      <div class="countdown-units">
+        <div class="cu"><span id="cd-days">00</span><small>Days</small></div>
+        <div class="cu-sep">:</div>
+        <div class="cu"><span id="cd-hours">00</span><small>Hrs</small></div>
+        <div class="cu-sep">:</div>
+        <div class="cu"><span id="cd-mins">00</span><small>Mins</small></div>
+        <div class="cu-sep">:</div>
+        <div class="cu"><span id="cd-secs">00</span><small>Secs</small></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== ABOUT SECTION ========== -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="section-tag">The Event</div>
+      <h2 class="section-title">A Night to Remember</h2>
+      <p class="about-text">
+        The OOU Awards Night is our school's most prestigious annual celebration — an elegant evening of dinner, music, and recognition. We honour students and staff who have demonstrated outstanding achievement, leadership, creativity, and service throughout the year.
+      </p>
+      <div class="stats-row">
+        <div class="stat-box"><span id="total-votes-display">0</span><small>Votes Cast</small></div>
+        <div class="stat-box"><span id="nominees-count">0</span><small>Nominees</small></div>
+        <div class="stat-box"><span id="categories-count">0</span><small>Categories</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW TO VOTE ========== -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="section-tag">Process</div>
+      <h2 class="section-title">How Voting Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3>Browse Nominees</h3>
+          <p>Scroll through all nominees in each category and discover this year's exceptional candidates.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3>Click Vote</h3>
+          <p>Tap the Vote button on your chosen nominee. Each vote costs ₦200 and you can vote multiple times.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3>Pay Securely</h3>
+          <p>Complete your payment via Paystack using card, bank transfer, or USSD — safe and instant.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <h3>Vote Counted!</h3>
+          <p>On payment success, your vote is recorded automatically and the tally updates in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== NOMINEES SECTION ========== -->
+  <section class="nominees-section" id="nominees">
+    <div class="container">
+      <div class="section-tag">Cast Your Vote</div>
+      <h2 class="section-title">Meet the Nominees</h2>
+
+      <!-- Category Filter Tabs -->
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-btn active" data-cat="All">All Categories</button>
+        <!-- Dynamically generated category tabs -->
+      </div>
+
+      <!-- Nominees Grid -->
+      <div class="nominees-grid" id="nomineesGrid">
+        <!-- Cards injected by script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== VOTE MODAL ========== -->
+  <div class="modal-overlay" id="voteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <div class="modal-nominee-img">
+        <img id="modalImg" src="" alt="" />
+      </div>
+      <h3 class="modal-name" id="modalName"></h3>
+      <p class="modal-cat" id="modalCat"></p>
+      <div class="modal-price">₦50 per vote</div>
+      <label class="modal-label" for="voterEmail">Your Email Address</label>
+      <input class="modal-input" type="email" id="voterEmail" placeholder="you@example.com" required />
+      <label class="modal-label" for="voterName">Your Full Name</label>
+      <input class="modal-input" type="text" id="voterName" placeholder="e.g. Amaka Obi" required />
+      <button class="btn-pay" id="payBtn">Pay & Vote →</button>
+      <p class="modal-secure">🔒 Secured by Paystack</p>
+    </div>
+  </div>
+
+  <!-- ========== SUCCESS TOAST ========== -->
+  <div class="toast" id="successToast">
+    <span class="toast-icon">🎉</span>
+    <span id="toastMsg">Your vote has been recorded!</span>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-logo">✦  OOU AWARDS</p>
+        <p>Annual Dinner & Awards Night 2026</p>
+      </div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#nominees">Nominees</a>
+        <a href="admin.html">Admin Login</a>
+      </div>
+      <p class="footer-copy">© 2026 OOU Awards Night. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - OOU Awards Night 2025</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       ADMIN-SPECIFIC STYLES
+       ============================================================ */
+    
+    /* Admin Login */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--dark);
+    }
+    
+    .login-box {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .login-box h1 {
+      font-family: var(--font-display);
+      color: var(--cream);
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    
+    .login-box p {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: var(--font-body);
+      transition: border-color 0.3s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-family: var(--font-body);
+    }
+    
+    .btn-login:hover {
+      background: var(--gold-light);
+    }
+    
+    .login-error {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-top: 16px;
+      display: none;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast notifications */
+    .admin-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--gold);
+      color: var(--dark);
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      z-index: 10000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       ADMIN LOGIN SCREEN
+       ============================================================ -->
+  <div class="login-container" id="adminLogin">
+    <div class="login-box">
+      <h1>✦ Admin Login</h1>
+      <p>Access the OOU Awards Dashboard</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="form-input" placeholder="Enter username" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-input" placeholder="Enter password" required />
+        </div>
+        
+        <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+        <p class="login-error" id="loginError">Invalid username or password</p>
+      </form>
+
+      <p style="margin-top:24px;font-size:0.8rem;color:var(--text-muted);">
+        <a href="index.html" style="color:var(--gold);">← Back to Voting Site</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADMIN DASHBOARD
+       ============================================================ -->
+  <div class="admin-dashboard" id="adminDashboard" style="display:none;">
+    
+    <!-- Admin Header -->
+    <header class="admin-header">
+      <div class="admin-header-inner">
+        <div class="admin-brand">
+          <h1>✦ OOU Awards</h1>
+          <span class="admin-badge">Admin Dashboard</span>
+        </div>
+        <div class="admin-actions">
+          <a href="index.html" class="btn-view-site">View Site</a>
+          <button class="btn-logout" onclick="adminLogout()">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="admin-stats">
+      <div class="stat-card">
+        <span class="stat-icon">🗳</span>
+        <div class="stat-content">
+          <span class="stat-value" id="statTotalVotes">0</span>
+          <span class="stat-label">Total Votes</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">👤</span>
+        <div class="stat-content">
+          <span class="stat-value" id="statNominees">0</span>
+          <span class="stat-label">Nominees</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <div class="stat-content">
+          <span class="stat-value" id="statCategories">0</span>
+          <span class="stat-label">Categories</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">💰</span>
+        <div class="stat-content">
+          <span class="stat-value" id="statRevenue">₦0</span>
+          <span class="stat-label">Revenue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="nominees" onclick="switchTab('nominees')">Nominees</button>
+      <button class="admin-tab" data-tab="categories" onclick="switchTab('categories')">Categories</button>
+      <button class="admin-tab" data-tab="votes" onclick="switchTab('votes')">Vote History</button>
+      <button class="admin-tab" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="admin-content">
+      
+      <!-- NOMINEES TAB -->
+      <div class="tab-content active" id="tab-nominees">
+        <div class="content-header">
+          <h2>Manage Nominees</h2>
+          <button class="btn-primary" onclick="openAddNomineeModal()">+ Add Nominee</button>
+        </div>
+
+        <!-- Add Nominee Form -->
+        <div class="admin-form" id="addNomineeForm" style="display:none;">
+          <h3>Add New Nominee</h3>
+          <form id="nomineeForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Name *</label>
+                <input type="text" id="newNomName" class="form-input" required />
+              </div>
+              <div class="form-group">
+                <label>Category *</label>
+                <select id="newNomCategory" class="form-input" required>
+                  <option value="">Select Category</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Bio</label>
+              <input type="text" id="newNomBio" class="form-input" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Save Nominee</button>
+              <button type="button" class="btn-secondary" onclick="closeAddNomineeModal()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Nominees Table -->
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Bio</th>
+                <th>Votes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="nomineesTableBody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;"><div class="loading-spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CATEGORIES TAB -->
+      <div class="tab-content" id="tab-categories">
+        <div class="content-header">
+          <h2>Manage Categories</h2>
+        </div>
+
+        <!-- Add Category Form -->
+        <div class="admin-form">
+          <h3>Add New Category</h3>
+          <form id="addCategoryForm">
+            <div class="form-row">
+              <div class="form-group" style="flex:1;">
+                <label>Category Name *</label>
+                <input type="text" id="newCatName" class="form-input" required />
+              </div>
+              <div class="form-actions" style="align-self:flex-end;">
+                <button type="submit" class="btn-primary">Add Category</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Categories List -->
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Nominee Count</th>
+                <th>Total Votes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody">
+              <tr><td colspan="4" style="text-align:center;padding:40px;"><div class="loading-spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VOTES TAB -->
+      <div class="tab-content" id="tab-votes">
+        <div class="content-header">
+          <h2>Vote History</h2>
+          <button class="btn-secondary" onclick="loadVoteLog()">Refresh</button>
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Voter Name</th>
+                <th>Email</th>
+                <th>Nominee</th>
+                <th>Category</th>
+                <th>Transaction Ref</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="votesTableBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="loading-spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p id="noVotesMsg" style="display:none;color:var(--text-muted);text-align:center;padding:40px;">No votes recorded yet.</p>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div class="tab-content" id="tab-settings">
+        <div class="content-header">
+          <h2>Settings</h2>
+        </div>
+
+        <div class="admin-form">
+          <h3>Change Admin Password</h3>
+          <form id="changePasswordForm">
+            <div class="form-group">
+              <label>Current Password *</label>
+              <input type="password" id="currentPassword" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label>New Password *</label>
+              <input type="password" id="newPassword" class="form-input" required minlength="6" />
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password *</label>
+              <input type="password" id="confirmPassword" class="form-input" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Change Password</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-form" style="margin-top:32px;">
+          <h3>Paystack Configuration</h3>
+          <p style="color:var(--text-muted);margin-bottom:20px;">
+            Configure your Paystack keys for payment processing. Get your keys from <a href="https://paystack.com" target="_blank" style="color:var(--gold);">paystack.com</a>
+          </p>
+          <form id="paystackForm">
+            <div class="form-group">
+              <label>Paystack Public Key</label>
+              <input type="text" id="paystackPublicKey" class="form-input" placeholder="pk_test_..." />
+            </div>
+            <div class="form-group">
+              <label>Paystack Secret Key</label>
+              <input type="password" id="paystackSecretKey" class="form-input" placeholder="sk_test_..." />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Save Settings</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-form" style="margin-top:32px;background:rgba(255,107,107,0.1);border-color:#ff6b6b;">
+          <h3 style="color:#ff6b6b;">⚠️ Danger Zone</h3>
+          <p style="color:var(--text-muted);margin-bottom:20px;">
+            These actions are irreversible. Proceed with caution.
+          </p>
+          <button class="btn-danger" onclick="resetAllVotes()">Reset All Votes</button>
+          <button class="btn-danger" onclick="clearAllData()">Clear All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box" style="max-width:500px;">
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+      <h3 style="margin-bottom:24px;color:var(--cream);">Edit Nominee</h3>
+      
+      <form id="editNomineeForm">
+        <input type="hidden" id="editNomId" />
+        
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" id="editNomName" class="form-input" required />
+        </div>
+        
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="editNomCategory" class="form-input" required>
+            <option value="">Select Category</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Bio</label>
+          <input type="text" id="editNomBio" class="form-input" />
+        </div>
+        
+        <div class="form-group">
+          <label>Votes</label>
+          <input type="number" id="editNomVotes" class="form-input" min="0" />
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save Changes</button>
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // API CONFIGURATION
+    // ============================================================
+    const API_URL = 'http://localhost:3001/api';
+
+    // ============================================================
+    // API LAYER
+    // ============================================================
+    const API = {
+      getToken() {
+        return localStorage.getItem('adminToken');
+      },
+
+      async request(endpoint, options = {}) {
+        const url = `${API_URL}${endpoint}`;
+        const token = this.getToken();
+
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+          ...options.headers,
+        };
+
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers,
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Request failed');
+          }
+
+          return data;
+        } catch (error) {
+          console.error(`API Error [${endpoint}]:`, error);
+          throw error;
+        }
+      },
+
+      // Auth
+      async login(username, password) {
+        const response = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Login failed');
+        return data;
+      },
+
+      async changePassword(currentPassword, newPassword) {
+        return this.request('/auth/change-password', {
+          method: 'POST',
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+      },
+
+      async verifyToken() {
+        return this.request('/auth/verify');
+      },
+
+      // Categories
+      async getCategories() {
+        return this.request('/categories');
+      },
+
+      async createCategory(name) {
+        return this.request('/categories', {
+          method: 'POST',
+          body: JSON.stringify({ name }),
+        });
+      },
+
+      async updateCategory(id, name) {
+        return this.request(`/categories/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ name }),
+        });
+      },
+
+      async deleteCategory(id) {
+        return this.request(`/categories/${id}`, {
+          method: 'DELETE',
+        });
+      },
+
+      // Nominees
+      async getNominees() {
+        return this.request('/nominees');
+      },
+
+      async createNominee(formData) {
+        return fetch(`${API_URL}/nominees`, {
+          method: 'POST',
+          headers: {
+            ...(this.getToken() && { 'Authorization': `Bearer ${this.getToken()}` }),
+          },
+          body: formData,
+        }).then(res => res.json());
+      },
+
+      async updateNominee(id, formData) {
+        return fetch(`${API_URL}/nominees/${id}`, {
+          method: 'PUT',
+          headers: {
+            ...(this.getToken() && { 'Authorization': `Bearer ${this.getToken()}` }),
+          },
+          body: formData,
+        }).then(res => res.json());
+      },
+
+      async deleteNominee(id) {
+        return this.request(`/nominees/${id}`, {
+          method: 'DELETE',
+        });
+      },
+
+      // Stats
+      async getStats() {
+        return this.request('/stats');
+      },
+
+      // Votes
+      async getVoteHistory(limit = 100) {
+        return this.request(`/votes/history?limit=${limit}`);
+      },
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let cachedCategories = [];
+    let cachedNominees = [];
+    let toastTimeout = null;
+
+    // ============================================================
+    // TOAST NOTIFICATIONS
+    // ============================================================
+    function showToast(message, type = 'success') {
+      // Remove existing toast
+      const existing = document.querySelector('.admin-toast');
+      if (existing) existing.remove();
+      if (toastTimeout) clearTimeout(toastTimeout);
+
+      const toast = document.createElement('div');
+      toast.className = 'admin-toast';
+      toast.style.background = type === 'error' ? '#ff6b6b' : 'var(--gold)';
+      toast.style.color = type === 'error' ? '#fff' : 'var(--dark)';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      toastTimeout = setTimeout(() => {
+        toast.remove();
+      }, 4000);
+    }
+
+    // ============================================================
+    // AVATAR GENERATOR
+    // ============================================================
+    function nameToColor(name) {
+      const palette = ['#C9A84C', '#8A7B40', '#6B5520', '#B8924A', '#D4B060'];
+      let sum = 0;
+      for (const ch of name) sum += ch.charCodeAt(0);
+      return palette[sum % palette.length];
+    }
+
+    function avatarSVG(name, size = 80) {
+      const initials = name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+      const bg = nameToColor(name);
+      return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><rect fill='${encodeURIComponent(bg)}' width='${size}' height='${size}'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' fill='%230B0B0F' font-size='${Math.round(size * 0.35)}' font-family='serif' font-weight='bold'>${initials}</text></svg>`;
+    }
+
+    // ============================================================
+    // AUTHENTICATION
+    // ============================================================
+    async function checkAdminAuth() {
+      const token = localStorage.getItem('adminToken');
+      if (!token) return;
+
+      try {
+        await API.verifyToken();
+        showDashboard();
+      } catch (error) {
+        localStorage.removeItem('adminToken');
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+      
+      btn.textContent = 'Signing in...';
+      btn.disabled = true;
+      errorEl.style.display = 'none';
+      
+      try {
+        const data = await API.login(username, password);
+        localStorage.setItem('adminToken', data.token);
+        showDashboard();
+      } catch (error) {
+        console.error('Login error:', error);
+        
+        // More helpful error messages
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorEl.innerHTML = '⚠️ Cannot connect to server.<br><small>Make sure the backend is running:<br><code>cd server && npm start</code></small>';
+        } else if (error.message.includes('Invalid credentials')) {
+          errorEl.textContent = 'Invalid username or password';
+        } else {
+          errorEl.textContent = error.message || 'Login failed. Please try again.';
+        }
+        errorEl.style.display = 'block';
+        document.getElementById('password').value = '';
+      } finally {
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
+      }
+    });
+
+    function adminLogout() {
+      localStorage.removeItem('adminToken');
+      document.getElementById('adminDashboard').style.display = 'none';
+      document.getElementById('adminLogin').style.display = 'flex';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      showToast('Logged out successfully');
+    }
+
+    // ============================================================
+    // DASHBOARD
+    // ============================================================
+    async function showDashboard() {
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'block';
+      
+      await Promise.all([
+        loadAdminStats(),
+        loadCategories(),
+        loadCategoriesSelect(),
+        loadNomineesTable(),
+        loadVoteLog()
+      ]);
+    }
+
+    // ============================================================
+    // STATS
+    // ============================================================
+    async function loadAdminStats() {
+      try {
+        const stats = await API.getStats();
+        document.getElementById('statTotalVotes').textContent = (stats.total_votes || 0).toLocaleString();
+        document.getElementById('statNominees').textContent = stats.nominees_count || 0;
+        document.getElementById('statCategories').textContent = stats.categories_count || 0;
+        document.getElementById('statRevenue').textContent = '₦' + ((stats.total_revenue_kobo || 0) / 100).toLocaleString();
+      } catch (error) {
+        console.error('Failed to load stats:', error);
+      }
+    }
+
+    // ============================================================
+    // TABS
+    // ============================================================
+    function switchTab(tabName) {
+      document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+      });
+      
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === 'tab-' + tabName);
+      });
+    }
+
+    // ============================================================
+    // CATEGORIES
+    // ============================================================
+    async function loadCategories() {
+      try {
+        const categories = await API.getCategories();
+        cachedCategories = categories;
+        
+        // Update categories tab table
+        const tbody = document.getElementById('categoriesTableBody');
+        if (categories.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">No categories yet. Add one above!</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = categories.map(cat => `
+          <tr>
+            <td><strong>${cat.name}</strong></td>
+            <td>${cat.nominee_count || 0}</td>
+            <td>${cat.total_votes || 0}</td>
+            <td>
+              <button class="btn-delete" onclick="deleteCategory('${cat.id}', '${cat.name}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+      }
+    }
+
+    function loadCategoriesSelect() {
+      const selects = [
+        document.getElementById('newNomCategory'),
+        document.getElementById('editNomCategory')
+      ];
+      
+      selects.forEach(select => {
+        if (!select) return;
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Select Category</option>';
+        cachedCategories.forEach(cat => {
+          select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+        });
+        if (currentVal) select.value = currentVal;
+      });
+    }
+
+    document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('newCatName').value.trim();
+      if (!name) return;
+      
+      try {
+        await API.createCategory(name);
+        this.reset();
+        await loadCategories();
+        loadCategoriesSelect();
+        loadAdminStats();
+        showToast('Category added successfully!');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    async function deleteCategory(id, name) {
+      if (!confirm(`Delete category "${name}"? This cannot be undone.`)) return;
+      
+      try {
+        await API.deleteCategory(id);
+        await loadCategories();
+        loadCategoriesSelect();
+        loadAdminStats();
+        showToast('Category deleted');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    // ============================================================
+    // NOMINEES
+    // ============================================================
+    async function loadNomineesTable() {
+      try {
+        const nominees = await API.getNominees();
+        cachedNominees = nominees;
+        
+        const tbody = document.getElementById('nomineesTableBody');
+        if (nominees.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No nominees yet. Add one above!</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = nominees.map(n => `
+          <tr>
+            <td><strong>${n.name}</strong></td>
+            <td><span class="category-tag">${n.category_name}</span></td>
+            <td>${n.bio || '-'}</td>
+            <td class="votes-cell">${n.votes || 0}</td>
+            <td>
+              <button class="btn-edit" onclick="openEditModal('${n.id}')">Edit</button>
+              <button class="btn-delete" onclick="deleteNominee('${n.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to load nominees:', error);
+      }
+    }
+
+    function openAddNomineeModal() {
+      document.getElementById('addNomineeForm').style.display = 'block';
+      loadCategoriesSelect();
+      document.getElementById('addNomineeForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeAddNomineeModal() {
+      document.getElementById('addNomineeForm').style.display = 'none';
+      document.getElementById('nomineeForm').reset();
+    }
+
+    document.getElementById('nomineeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('newNomName').value.trim();
+      const category_id = document.getElementById('newNomCategory').value;
+      const bio = document.getElementById('newNomBio').value.trim();
+      
+      if (!name || !category_id) {
+        showToast('Please fill in required fields', 'error');
+        return;
+      }
+      
+      try {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('category_id', category_id);
+        formData.append('bio', bio);
+        
+        await API.createNominee(formData);
+        closeAddNomineeModal();
+        await loadNomineesTable();
+        loadAdminStats();
+        showToast('Nominee added successfully!');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    function openEditModal(id) {
+      const nominee = cachedNominees.find(n => n.id === id);
+      if (!nominee) return;
+      
+      loadCategoriesSelect();
+      
+      document.getElementById('editNomId').value = nominee.id;
+      document.getElementById('editNomName').value = nominee.name;
+      document.getElementById('editNomCategory').value = nominee.category_id;
+      document.getElementById('editNomBio').value = nominee.bio || '';
+      document.getElementById('editNomVotes').value = nominee.votes || 0;
+      
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('active');
+    }
+
+    document.getElementById('editNomineeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('editNomId').value;
+      const name = document.getElementById('editNomName').value.trim();
+      const category_id = document.getElementById('editNomCategory').value;
+      const bio = document.getElementById('editNomBio').value.trim();
+      const votes = parseInt(document.getElementById('editNomVotes').value) || 0;
+      
+      try {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('category_id', category_id);
+        formData.append('bio', bio);
+        formData.append('votes', votes);
+        
+        await API.updateNominee(id, formData);
+        closeEditModal();
+        await loadNomineesTable();
+        loadAdminStats();
+        showToast('Nominee updated successfully!');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    async function deleteNominee(id) {
+      if (!confirm('Are you sure you want to delete this nominee? This action cannot be undone.')) return;
+      
+      try {
+        await API.deleteNominee(id);
+        await loadNomineesTable();
+        loadAdminStats();
+        showToast('Nominee deleted');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    // ============================================================
+    // VOTE LOG
+    // ============================================================
+    async function loadVoteLog() {
+      try {
+        const data = await API.getVoteHistory(100);
+        const votes = data.votes || [];
+        
+        const tbody = document.getElementById('votesTableBody');
+        const noMsg = document.getElementById('noVotesMsg');
+        
+        if (votes.length === 0) {
+          tbody.innerHTML = '';
+          noMsg.style.display = 'block';
+          return;
+        }
+        
+        noMsg.style.display = 'none';
+        
+        tbody.innerHTML = votes.map(v => `
+          <tr>
+            <td>${new Date(v.created_at).toLocaleString()}</td>
+            <td>${v.voter_name}</td>
+            <td>${v.voter_email}</td>
+            <td><strong>${v.nominee_name || 'Unknown'}</strong></td>
+            <td><span class="category-tag">${v.category_name || '-'}</span></td>
+            <td style="font-family:monospace;font-size:0.8rem;">${v.transaction_ref || '-'}</td>
+            <td>₦${((v.amount_kobo || 20000) / 100).toLocaleString()}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to load vote history:', error);
+      }
+    }
+
+    // ============================================================
+    // SETTINGS
+    // ============================================================
+    document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (newPassword !== confirmPassword) {
+        showToast('New passwords do not match', 'error');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        showToast('New password must be at least 6 characters', 'error');
+        return;
+      }
+      
+      try {
+        await API.changePassword(currentPassword, newPassword);
+        this.reset();
+        showToast('Password changed successfully!');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    document.getElementById('paystackForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      showToast('Paystack settings saved! Update script.js with the public key.');
+    });
+
+    function resetAllVotes() {
+      if (!confirm('Are you sure you want to reset ALL votes? This will set all nominee vote counts to 0. This cannot be undone.')) return;
+      showToast('Feature coming soon - requires backend implementation', 'error');
+    }
+
+    function clearAllData() {
+      if (!confirm('⚠️ DANGER: This will delete ALL data including nominees, categories, and votes. This CANNOT be undone! Type "DELETE" to confirm.')) return;
+      showToast('Feature disabled for safety. Contact developer.', 'error');
+    }
+
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+    checkAdminAuth();
+  </script>
+
+  <style>
+    /* Additional admin dashboard styles */
+    .admin-dashboard {
+      min-height: 100vh;
+      background: var(--dark);
+    }
+
+    .admin-header {
+      background: var(--dark-2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+
+    .admin-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-brand h1 {
+      font-family: var(--font-display);
+      color: var(--cream);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-view-site, .btn-logout {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+
+    .btn-view-site {
+      background: var(--dark);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-logout {
+      background: transparent;
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+    }
+
+    .admin-stats {
+      max-width: 1400px;
+      margin: 24px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--cream);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .admin-tabs {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .admin-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+      font-family: var(--font-body);
+    }
+
+    .admin-tab:hover {
+      color: var(--text);
+    }
+
+    .admin-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .admin-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .content-header h2 {
+      font-family: var(--font-display);
+      color: var(--cream);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .btn-primary, .btn-secondary, .btn-danger {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+    }
+
+    .btn-secondary {
+      background: var(--dark);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+    }
+
+    .btn-danger {
+      background: #ff6b6b;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #ff4757;
+    }
+
+    .admin-form {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .admin-form h3 {
+      color: var(--cream);
+      font-size: 1.1rem;
+      margin: 0 0 20px 0;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .admin-table-wrapper {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .admin-table th {
+      background: var(--dark);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    .admin-table td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .nominee-photo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .category-tag {
+      background: var(--dark);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    .votes-cell {
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .btn-edit, .btn-delete {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: none;
+      margin-right: 8px;
+      font-family: var(--font-body);
+    }
+
+    .btn-edit {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .btn-delete {
+      background: rgba(255,107,107,0.2);
+      color: #ff6b6b;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .admin-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .admin-table-wrapper {
+        overflow-x: auto;
+      }
+      
+      .admin-table {
+        min-width: 800px;
+      }
+    }
+  </style>
+</body>
+</html>
